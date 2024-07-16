@@ -1,0 +1,29 @@
+apiVersion: sonataflow.org/v1alpha08
+kind: SonataFlow
+metadata:
+  name: complex.workflow3
+  annotations:
+    sonataflow.org/profile: prod
+  labels:
+    backstage.io/kubernetes-id: complex.workflow3
+spec:
+  persistence:
+    postgresql:
+      secretRef:
+        name:  sonataflow-psql-postgresql
+        userKey: postgres-username
+        passwordKey: postgres-password
+      serviceRef:
+        name: sonataflow-psql-postgresql
+        port: 5432
+        databaseName: sonataflow
+        databaseSchema: complex.workflow3
+  podTemplate:
+    container:
+      image: serverless-workflow-complex.workflow3
+      envFrom:
+      - configMapRef:
+          name: complex.workflow3-gitops
+      - secretRef:
+          name: complex.workflow3-secret
+      resources: {}

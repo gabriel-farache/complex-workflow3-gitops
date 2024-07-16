@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+resources:
+__RESOURCES__
+namespace: sonataflow-infra
+
+configurations:
+- config/image-configuration.yaml
+
+generatorOptions:
+  disableNameSuffixHash: true
+
+secretGenerator:
+  - envs:
+      - secret.properties
+    name: complex.workflow3-secret
+configMapGenerator:
+  - envs:
+      - config.properties
+    name: complex.workflow3-gitops
+
+# Replace dev profile in SonataFlow instance(s), add image and envFrom
+patches:
+- path: sonataflow-patch.yaml
+  target:
+    kind: SonataFlow
+    name: complex.workflow3
+images:
+- name: serverless-workflow-complex.workflow3
+  newName: quay.io/gfarache/complex-workflow
+  newTag: __IMAGE_TAG__
